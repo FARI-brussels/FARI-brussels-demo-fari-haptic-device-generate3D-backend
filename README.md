@@ -6,7 +6,7 @@ This is a version of [Shap-E: Generating Conditional 3D Implicit Functions](http
 
 ### Endpoint: `/generate`
 
-Generates 3D models based on a given text prompt and saves them as .obj files.
+Generates a single 3D model based on a given text prompt and saves it as an .obj file at a specified path.
 
 #### Method: `POST`
 
@@ -17,12 +17,15 @@ Generates 3D models based on a given text prompt and saves them as .obj files.
 | Parameter | Type   | Description                                 |
 |-----------|--------|---------------------------------------------|
 | prompt    | string | The text prompt to generate the 3D model(s).|
+|save_path	|string	 |(Optional) The file path where the model is saved.|
+
+If save_path is not provided, the file will be saved in the default directory where the server is running.
 
 #### Response Body (JSON):
 
 | Parameter  | Type  | Description                                       |
 |------------|-------|---------------------------------------------------|
-| file_paths | array | An array of strings, each a path to a generated .obj file. |
+| file_path  | string | The path to the generated .obj file.|
 
 #### Status Codes:
 
@@ -42,12 +45,11 @@ curl -X POST -H "Content-Type: application/json" -d "{\"prompt\":\"a shark\", \"
 
 ## C# (using HttpClient)
 ```csharp
-Copy code
 using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json; // Install with NuGet: Install-Package Newtonsoft.Json
+using Newtonsoft.Json; // Ensure Newtonsoft.Json is installed: Install-Package Newtonsoft.Json
 
 namespace APIClient
 {
@@ -58,16 +60,29 @@ namespace APIClient
         static async Task Main()
         {
             var url = "http://localhost:5000/generate";
-            var prompt = new { prompt = "a shark" };
-            var json = JsonConvert.SerializeObject(prompt);
+            var requestData = new 
+            { 
+                prompt = "a shark",
+                save_path = "C:\\desired\\path\\for\\model"
+            };
+            
+            var json = JsonConvert.SerializeObject(requestData);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
             HttpResponseMessage response = await client.PostAsync(url, data);
-            string result = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(result);
+            if(response.IsSuccessStatusCode)
+            {
+                string result = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("Generated model path: " + result);
+            }
+            else
+            {
+                Console.WriteLine("Error: " + response.StatusCode);
+            }
         }
     }
 }
+
 ```
 
 
