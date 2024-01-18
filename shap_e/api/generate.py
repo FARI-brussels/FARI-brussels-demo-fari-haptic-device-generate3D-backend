@@ -18,8 +18,13 @@ diffusion = diffusion_from_config(load_config('diffusion'))
 def generate():
     content = request.json
     prompt = content['prompt']
+    save_path = content.get('save_path', '')  # Get the save_path if provided, else default to empty string.
     batch_size = 1
     guidance_scale = 15.0
+
+    # Validate save_path
+    if save_path and not os.path.isdir(save_path):
+        os.makedirs(save_path, exist_ok=True)  # Create the directory if it does not exist
 
     # Sample latents based on the prompt.
     latents = sample_latents(
@@ -38,17 +43,16 @@ def generate():
         s_churn=0,
     )
 
-    # Save the latents as meshes.
-    file_paths = []
-    for i, latent in enumerate(latents):
-        t = decode_latent_mesh(xm, latent).tri_mesh()
-        obj_filename = f'example_mesh_{i}.obj'
-        with open(obj_filename, 'w') as f:
-            t.write_obj(f)
-        file_paths.append(obj_filename)
+    # Save the latent as a mesh (only one).
+    latent = latents[0]  # Assuming only one latent is generated.
+    t = decode_latent_mesh(xm, latent).tri_mesh()
+    file_name = 'generated_model.obj'
+    full_path = os.path.join(save_path, file_name) if save_path else file_name
+    with open(full_path, 'w') as f:
+        t.write_obj(f)
 
-    # Return the file paths in the response.
-    return jsonify({'file_paths': file_paths})
+    # Return the file path in the response.
+    return jsonify({'file_path': full_path})
 
 if __name__ == '__main__':
     app.run(debug=True)
