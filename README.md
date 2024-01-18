@@ -140,3 +140,11 @@ pip install Flask
 Note : It is advised to run the code in a conda environement
 
 
+# Usage
+
+```
+cd shap_e/api
+python generate.py
+```
+
+Note : It is advised to run the code in a conda environement
