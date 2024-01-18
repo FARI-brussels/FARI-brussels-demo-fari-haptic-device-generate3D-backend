@@ -37,7 +37,8 @@ Generates 3D models based on a given text prompt and saves them as .obj files.
 ### Curl
 
 ```bash
-curl -X POST -H "Content-Type: application/json" -d '{"prompt":"a shark"}' http://localhost:5000/generate
+curl -X POST -H "Content-Type: application/json" -d '{\"prompt\":\"a shark\", "save_path":"/desired/path/for/models"}' http://localhost:5000/generate
+
 ```
 
 ## C# (using HttpClient)
