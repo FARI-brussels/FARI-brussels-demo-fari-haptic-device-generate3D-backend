@@ -1,9 +1,75 @@
-# Shap-E
+# 3d Model generation api for the Haptic Device Demo 
 
-This is the official code and model release for [Shap-E: Generating Conditional 3D Implicit Functions](https://arxiv.org/abs/2305.02463).
+This is a version of [Shap-E: Generating Conditional 3D Implicit Functions](https://arxiv.org/abs/2305.02463), extended with an API in order to serve a Unity demonstration for an haptic device. The unity demonstration allows you to generate a 3D model from a prompt, to load it in unity and to "feel it" through the force feedback of the haptic device.
 
- * See [Usage](#usage) for guidance on how to use this repository.
- * See [Samples](#samples) for examples of what our text-conditional model can generate.
+## API Documentation
+
+### Endpoint: `/generate`
+
+Generates 3D models based on a given text prompt and saves them as .obj files.
+
+#### Method: `POST`
+
+#### URL: `http://<your-server-address>:5000/generate`
+
+#### Request Body (JSON):
+
+| Parameter | Type   | Description                                 |
+|-----------|--------|---------------------------------------------|
+| prompt    | string | The text prompt to generate the 3D model(s).|
+
+#### Response Body (JSON):
+
+| Parameter  | Type  | Description                                       |
+|------------|-------|---------------------------------------------------|
+| file_paths | array | An array of strings, each a path to a generated .obj file. |
+
+#### Status Codes:
+
+- `200 OK`: Request was successful, and 3D models were generated.
+- `4XX`: Client errors (bad request data).
+- `5XX`: Server errors (issues with model generation or server configuration).
+
+---
+
+## Example Usage:
+
+### Curl
+
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{"prompt":"a shark"}' http://localhost:5000/generate
+```
+
+## C# (using HttpClient)
+```csharp
+Copy code
+using System;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json; // Install with NuGet: Install-Package Newtonsoft.Json
+
+namespace APIClient
+{
+    class Program
+    {
+        static readonly HttpClient client = new HttpClient();
+
+        static async Task Main()
+        {
+            var url = "http://localhost:5000/generate";
+            var prompt = new { prompt = "a shark" };
+            var json = JsonConvert.SerializeObject(prompt);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await client.PostAsync(url, data);
+            string result = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(result);
+        }
+    }
+}
+```
+
 
 # Samples
 
@@ -62,12 +128,15 @@ Here are some highlighted samples from our text-conditional model. For random sa
     </tbody>
 <table>
 
-# Usage
+# Installation
 
-Install with `pip install -e .`.
+```
+git clone https://github.com/FARI-brussels/demo-fari-haptic-device-generate3D-backend.git
+cd demo-fari-haptic-device-generate3D-backend
+pip install -e .
+pip install Flask
+```
 
-To get started with examples, see the following notebooks:
+Note : It is advised to run the code in a conda environement
 
-* [sample_text_to_3d.ipynb](shap_e/examples/sample_text_to_3d.ipynb) - sample a 3D model, conditioned on a text prompt.
-* [sample_image_to_3d.ipynb](shap_e/examples/sample_image_to_3d.ipynb) - sample a 3D model, conditioned on a synthetic view image. To get the best result, you should remove background from the input image.
-* [encode_model.ipynb](shap_e/examples/encode_model.ipynb) - loads a 3D model or a trimesh, creates a batch of multiview renders and a point cloud, encodes them into a latent, and renders it back. For this to work, install Blender version 3.3.1 or higher, and set the environment variable `BLENDER_PATH` to the path of the Blender executable.
+
