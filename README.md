@@ -152,7 +152,7 @@ pip install -e .
 pip install Flask
 ```
 
-Note : It is advised to run the code in a conda environement, in windows you may need to use the anaconda terminal
+Note : It is advised to run the code in a conda environement
 
 
 # Usage
