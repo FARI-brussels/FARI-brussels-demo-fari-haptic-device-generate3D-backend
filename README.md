@@ -2,6 +2,27 @@
 
 This is a version of [Shap-E: Generating Conditional 3D Implicit Functions](https://arxiv.org/abs/2305.02463), extended with an API in order to serve a Unity demonstration for an haptic device. The unity demonstration allows you to generate a 3D model from a prompt, to load it in unity and to "feel it" through the force feedback of the haptic device.
 
+# Installation
+
+```
+git clone https://github.com/FARI-brussels/demo-fari-haptic-device-generate3D-backend.git
+cd demo-fari-haptic-device-generate3D-backend
+pip install -e .
+pip install Flask
+```
+
+Note : It is advised to run the code in a conda environement
+
+
+# Usage
+
+```
+cd shap_e/api
+python generate.py
+```
+
+Note : It is advised to run the code in a conda environement
+
 ## API Documentation
 
 ### Endpoint: `/generate`
@@ -143,23 +164,3 @@ Here are some highlighted samples from our text-conditional model. For random sa
     </tbody>
 <table>
 
-# Installation
-
-```
-git clone https://github.com/FARI-brussels/demo-fari-haptic-device-generate3D-backend.git
-cd demo-fari-haptic-device-generate3D-backend
-pip install -e .
-pip install Flask
-```
-
-Note : It is advised to run the code in a conda environement
-
-
-# Usage
-
-```
-cd shap_e/api
-python generate.py
-```
-
-Note : It is advised to run the code in a conda environement
